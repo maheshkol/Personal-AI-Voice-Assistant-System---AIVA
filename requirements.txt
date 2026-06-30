@@ -1,0 +1,36 @@
+# ── LLM ──────────────────────────────────────────────
+google-genai>=1.0.0                  # Gemini 2.0 Flash (new official SDK)
+
+# ── ASR (Speech Recognition) ─────────────────────────
+faster-whisper>=1.1.1                # Whisper on CPU, fast
+SpeechRecognition>=3.10.4            # Fallback mic input helper
+PyAudio>=0.2.14                      # Microphone access
+
+# ── TTS (Text to Speech) ─────────────────────────────
+gTTS>=2.5.1                          # Simple cloud TTS (for demo)
+pyttsx3>=2.90                        # Offline TTS fallback
+playsound==1.2.2                     # Audio playback
+
+# ── Wake Word ─────────────────────────────────────────
+openwakeword>=0.6.0                  # "Hey AIVA" detection
+
+# ── Web Backend ───────────────────────────────────────
+fastapi>=0.110.0                     # REST + WebSocket server
+uvicorn[standard]>=0.29.0            # ASGI server
+websockets>=12.0                     # WebSocket support
+
+# ── Web Frontend / UI ─────────────────────────────────
+streamlit>=1.33.0                    # Quick demo UI
+
+# ── Tools / Function Calling ──────────────────────────
+wikipedia-api>=0.6.0                 # Wikipedia search
+requests>=2.31.0                     # HTTP client (weather API)
+
+# ── Data & Config ─────────────────────────────────────
+python-dotenv>=1.0.1                 # Load .env file
+pydantic>=2.7.0                      # Settings validation
+pyyaml>=6.0.1                        # YAML config support
+redis>=5.0.4                         # Redis session cache
+
+# ── Utils ─────────────────────────────────────────────
+numpy>=1.26.0                        # Audio processing

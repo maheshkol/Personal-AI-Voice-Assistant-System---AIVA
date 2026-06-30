@@ -7,11 +7,9 @@
 <p align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
-![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)
-![React](https://img.shields.io/badge/Frontend-React-61DAFB.svg)
+![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)
+![Streamlit](https://img.shields.io/badge/UI-Streamlit-red.svg)
 ![Gemini](https://img.shields.io/badge/LLM-Gemini_2.0_Flash-orange.svg)
-![Docker](https://img.shields.io/badge/Deploy-Docker_Compose-2496ED.svg)
-![AWS](https://img.shields.io/badge/Cloud-AWS_EC2-FF9900.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 </p>
@@ -20,36 +18,34 @@
 
 ## 📖 Overview
 
-**AIVA (AI-Powered Voice Assistant with LLM Integration)** is a cloud-deployed, multilingual voice assistant supporting **English, Hindi, and Marathi**. It was developed as an M.Sc. Data Science & AI dissertation project at **Savitribai Phule Pune University**, under the supervision of **Dr. Manisha Bharati**.
+**AIVA (AI-Powered Voice Assistant with LLM Integration)** is a multilingual, modular voice assistant supporting **English, Hindi, and Marathi**. It was developed as an M.Sc. Data Science & AI dissertation project at **Savitribai Phule Pune University**, under the supervision of **Dr. Manisha Bharati**.
 
-AIVA evolved from an early two-module CLI/Streamlit prototype into a production-grade system built through a full 7-phase software engineering lifecycle — requirements (SRS), architecture design, implementation, testing, deployment, and submission.
-
-> 🎯 Target performance: sub-2.3s end-to-end latency, ~$70/month operating cost on AWS.
+AIVA combines speech recognition, an LLM conversational engine, text-to-speech, wake-word activation, and tool integrations (weather, Wikipedia) into one modular Python package — accessible via a **CLI**, a **Streamlit web UI**, or a **FastAPI WebSocket API**.
 
 ---
 
 ## ✨ Features
 
-- 🎤 High-accuracy Speech Recognition (ASR)
-- 🤖 LLM-powered conversational intelligence
-- 🔊 Natural, multilingual Text-to-Speech
-- 🌍 English, Hindi & Marathi support
-- 🪄 Wake-word activation
-- 📚 Wikipedia knowledge lookup
-- 🌦 Real-time weather information
-- 🖥 Modern React web interface
-- ⚡ Sub-2.3s end-to-end response latency
-- ☁️ Fully containerized cloud deployment
-- 🔁 Automated CI/CD pipeline
-- 🧪 Comprehensive test coverage
+- 🎤 Speech-to-Text using **faster-whisper**
+- 🤖 Conversational intelligence via **Google Gemini 2.0 Flash**
+- 🔊 Text-to-Speech via **gTTS** with audio playback through **pygame**
+- 🌍 English, Hindi & Marathi support (ASR, TTS, and translation)
+- 🪄 Wake-word activation ("Hey AIVA") with energy-based and openWakeWord detection modes
+- 📚 Wikipedia knowledge lookup (multilingual)
+- 🌦 Real-time weather lookup via the free Open-Meteo API (no key required)
+- 🖥 Streamlit-based web interface
+- 🌐 FastAPI + WebSocket server for real-time, low-latency interaction
+- ⌨️ CLI conversation loop
+- 📝 Structured session, interaction, and error logging
+- 🧪 Pytest-based test suite
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Architecture
 
 ```
                     +----------------+
-                    |   User (Web)   |
+                    |     User       |
                     +-------+--------+
                             |
                   Voice / Text Input
@@ -57,78 +53,67 @@ AIVA evolved from an early two-module CLI/Streamlit prototype into a production-
                             ▼
                  +---------------------+
                  |  Wake Word Detector |
-                 |   (openWakeWord)    |
                  +---------------------+
                             |
                             ▼
                  +---------------------+
-                 |   ASR (faster-      |
-                 |   whisper, Large-v3)|
+                 |  ASR (faster-       |
+                 |  whisper)           |
                  +---------------------+
                             |
                             ▼
                  +---------------------+
-                 |  Language Detection |
-                 |  & Preprocessing    |
+                 | Language Detection  |
+                 | & Translation Layer |
                  +---------------------+
                             |
                             ▼
                  +---------------------+
                  | Gemini 2.0 Flash    |
-                 |     (LLM Engine)    |
+                 |   (LLM Engine)      |
                  +---------------------+
                     |      |
               Weather   Wikipedia
-              Module    Module
                     |      |
                     ▼      ▼
               Tool Integrations
                             |
                             ▼
                 +----------------------+
-                | TTS (Coqui XTTS-v2)  |
+                |   TTS (gTTS +        |
+                |   pygame playback)   |
                 +----------------------+
                             |
                             ▼
                         Audio Output
 ```
 
-**Backend:** FastAPI · **Frontend:** React
-**Deployment:** Docker Compose + Nginx on AWS EC2 (ap-south-1)
-**CI/CD:** GitHub Actions
-
-> Weather, Wikipedia, and LLM modules are intentionally kept as separate, decoupled components to support future agentic AI orchestration (LangChain-based routing).
+> Weather, Wikipedia, and LLM modules are intentionally kept decoupled to support future agentic routing (LangChain-based orchestration is planned for Phase 2).
 
 ---
 
 ## 📂 Project Structure
 
 ```
-AIVA/
+aiva/
 │
-├── backend/
-│   ├── asr/              # faster-whisper integration
-│   ├── llm/               # Gemini 2.0 Flash integration
-│   ├── tts/               # Coqui XTTS-v2 integration
-│   ├── wake/               # openWakeWord
-│   ├── tools/              # weather, wikipedia modules
-│   ├── multilingual/        # EN/HI/MR preprocessing
-│   ├── api/                # FastAPI routes
-│   └── utils/
+├── src/aiva/
+│   ├── asr/                 # faster-whisper speech recognition
+│   ├── llm/                 # Gemini 2.0 Flash client
+│   ├── tts/                 # gTTS + pygame text-to-speech engine
+│   ├── wake/                 # Wake-word detection
+│   ├── multilingual/          # Language detection & translation
+│   ├── tools/                 # Weather (Open-Meteo) & Wikipedia tools
+│   ├── cli/                    # CLI conversation loop
+│   ├── web/                    # Streamlit app + FastAPI WebSocket server
+│   ├── logging_system/          # Session, interaction & error logging
+│   └── config/                  # Settings
 │
-├── frontend/
-│   ├── src/
-│   └── public/
-│
-├── deployment/
-│   ├── docker-compose.yml
-│   ├── nginx/
-│   └── .github/workflows/   # CI/CD
-│
-├── tests/
-├── docs/
-├── logs/
+├── tests/                  # Pytest test suite
+├── logs/                   # Runtime logs (sessions / interactions / errors)
+├── run_api.py              # Entry point: FastAPI WebSocket server
 ├── requirements.txt
+├── pyproject.toml
 ├── .env.example
 └── README.md
 ```
@@ -139,40 +124,26 @@ AIVA/
 
 | Layer | Technology |
 |---|---|
-| Speech Recognition (ASR) | faster-whisper (Whisper Large-v3) |
-| LLM | Google Gemini 2.0 Flash |
-| Text-to-Speech | Coqui XTTS-v2 |
-| Wake Word | openWakeWord (CNN classifier) |
-| Backend | FastAPI |
-| Frontend | React |
-| Deployment | AWS EC2 (ap-south-1), Docker Compose, Nginx |
-| CI/CD | GitHub Actions |
-| Weather Data | Open-Meteo API |
+| Speech Recognition (ASR) | faster-whisper |
+| LLM | Google Gemini 2.0 Flash (`google-genai`) |
+| Text-to-Speech | gTTS + pygame |
+| Wake Word | Energy-based detection / openWakeWord |
+| Web UI | Streamlit |
+| API Server | FastAPI + WebSockets, Uvicorn |
+| Weather Data | Open-Meteo API (free, no key) |
 | Knowledge | Wikipedia API |
-
----
-
-## 📊 Key Performance Benchmarks
-
-| Metric | Result |
-|---|---|
-| WER (English) | ~6.8% |
-| WER (Hindi) | ~14.2% |
-| End-to-end latency | ~2286 ms (avg) |
-| Mean Opinion Score (MOS) | ~4.1 / 5.0 |
-| System Usability Scale (SUS) | ~82 / 100 |
-| Uptime | ~99.8% |
+| Config & Env | python-dotenv, pydantic, PyYAML |
+| Caching | Redis |
+| Testing | Pytest |
 
 ---
 
 ## 📋 Requirements
 
 - Python 3.11+
-- Node.js (for frontend build)
-- Docker & Docker Compose
 - Git
-- Google Gemini API Key
-- AWS account (for cloud deployment)
+- Microphone & speakers (for voice mode)
+- Google Gemini API key
 
 ---
 
@@ -185,50 +156,62 @@ git clone https://github.com/<your-username>/AIVA.git
 cd AIVA
 ```
 
-### Environment Variables
+### Create a virtual environment
 
-Create a `.env` file in the project root:
+```bash
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# Linux / macOS
+source .venv/bin/activate
+```
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+or, as an editable package:
+
+```bash
+pip install -e .
+```
+
+### Configure environment variables
+
+Create a `.env` file in the project root (copy from `.env.example`):
 
 ```env
 GEMINI_API_KEY=YOUR_GEMINI_API_KEY
 ```
 
-⚠️ **Never commit your `.env` file to GitHub.** Use `.env.example` instead.
-
-### Local Development (without Docker)
-
-```bash
-python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-
-# Backend
-uvicorn backend.api.main:app --reload
-
-# Frontend
-cd frontend
-npm install
-npm run dev
-```
-
-### Dockerized Deployment
-
-```bash
-docker compose -f deployment/docker-compose.yml up --build -d
-```
-
-This spins up the backend, frontend, and Nginx reverse proxy as defined in `docker-compose.yml`.
+⚠️ **Never commit your `.env` file or any file containing API keys to GitHub.**
 
 ---
 
-## ☁️ Cloud Deployment (AWS EC2)
+## ▶️ Running AIVA
 
-1. Provision an EC2 instance in `ap-south-1`
-2. Install Docker & Docker Compose on the instance
-3. Pull the repository and configure `.env`
-4. Run `docker compose up -d`
-5. Nginx handles routing and reverse proxy on port 80/443
-6. GitHub Actions automates build → push → deploy on each merge to `main`
+### CLI mode
+
+```bash
+python -m aiva.cli.conversation_loop
+```
+
+### Streamlit Web UI
+
+```bash
+streamlit run src/aiva/web/app.py
+```
+
+### FastAPI WebSocket Server
+
+```bash
+python run_api.py
+```
+
+- Server: `http://localhost:8080`
+- API docs: `http://localhost:8080/docs`
 
 ---
 
@@ -244,47 +227,49 @@ pytest
 
 - 🇺🇸 English
 - 🇮🇳 Hindi
-- 🇮🇳 Marathi *(initial support; full production parity in progress)*
+- 🇮🇳 Marathi
 
 ---
 
 ## 📝 Logging
 
-AIVA logs the following to `logs/`:
+AIVA logs structured records to `logs/`:
 
-- User conversations
-- ASR/TTS errors
-- Session metadata
-- Debug information
+- `logs/sessions/` — session metadata
+- `logs/interactions/` — user input, detected language, translated text, intent, tool used, response, latency
+- `logs/errors/` — error traces and tracebacks
 
 ---
 
-## 🚀 Future Roadmap (Phase 2)
+## 🚀 Roadmap (Phase 2)
 
+- [ ] Containerized deployment (Docker Compose + Nginx)
+- [ ] Cloud deployment on AWS EC2/ECS
+- [ ] CI/CD via GitHub Actions
+- [ ] React-based frontend
 - [ ] MongoDB Atlas — persistent conversation memory
 - [ ] LangChain-based agentic AI orchestration
-- [ ] AWS ECS/Fargate deployment (auto-scaling)
 - [ ] RAG-based knowledge retrieval
-- [ ] Mobile application
-- [ ] Calendar & email assistant integrations
 
 ---
 
 ## ⚠️ Troubleshooting
 
-**`GEMINI_API_KEY` is not set**
-Add it to your `.env` file.
+**`GEMINI_API_KEY not found in .env`**
+Make sure `.env` exists in the project root with a valid key.
 
 **Module not found**
 ```bash
 pip install -r requirements.txt
 ```
 
-**Docker build fails**
-Ensure Docker Compose v2+ is installed and `.env` is present in the project root before running `docker compose up`.
+**Microphone not detected**
+Check microphone permissions and that the correct input device is selected at the OS level.
 
-**Microphone not detected (local dev)**
-Check browser microphone permissions and the selected input device.
+**Streamlit not found**
+```bash
+pip install streamlit
+```
 
 ---
 
